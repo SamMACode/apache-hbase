@@ -1,0 +1,62 @@
+# Create the table:
+create 'blog', 'info', 'content'
+
+# List tables:
+list
+
+# Describe blog table
+describe 'blog'
+
+# Run in HBase shell the following to add some data:
+
+put 'blog', '20131020162535', 'info:title', 'Why use HBase?'
+put 'blog', '20131020162535', 'info:author', 'Jane Doe'
+put 'blog', '20131020162535', 'info:category', 'Persistence'
+put 'blog', '20131020162535', 'content:', 'HBase is a column-oriented...'
+
+put 'blog', '20131107145045', 'info:title', 'Intro to Bigtable'
+put 'blog', '20131107145045', 'info:author', 'John'
+put 'blog', '20131107145045', 'info:category', 'Persistence'
+put 'blog', '20131107145045', 'content:', 'Google Bigtable is...'
+put 'blog', '20131107145045', 'content:', 'Google\'s Bigtable is...'
+put 'blog', '20131107145045', 'info:author', 'John Doe'
+put 'blog', '20131107145045', 'info:category', 'Persistence'
+
+
+# Following commands retrieve data:
+
+get 'blog', '20131020162535'
+get 'blog', '20131020162535', { COLUMN => 'info:title' }
+get 'blog', '20131020162535', { COLUMN => [ 'info:title', 'info:author', 'info:category' ] }
+
+get 'blog', '20131107145045'
+get 'blog', '20131107145045', { COLUMN => 'info:author' }
+get 'blog', '20131107145045', { COLUMN => 'info:author', VERSIONS => 3 }
+get 'blog', '20131107145045', { COLUMN => 'content:', VERSIONS => 3 }
+
+# Do some scans
+
+scan 'blog', { LIMIT => 1 }
+scan 'blog', { STARTROW => '20131107145045' }
+scan 'blog', { STARTROW => '20131000', STOPROW => '20131100' }
+scan 'blog', { STARTROW => '20131000', STOPROW => '20131100', COLUMNS => 'info:' }
+scan 'blog', { STARTROW => '20131000', STOPROW => '20130500', COLUMNS => 'info:' }
+
+########################################################################################################
+
+# Better row key design...use reverse order timestamp to get the most recent posts first when scanning
+
+put 'blog', '9223370736202040807', 'info:title', 'Why use HBase?'
+put 'blog', '9223370736202040807', 'info:author', 'Jane Doe'
+put 'blog', '9223370736202040807', 'info:category', 'Persistence'
+put 'blog', '9223370736202040807', 'content:', 'HBase is a column-oriented...'
+
+put 'blog', '9223370734652530807', 'info:title', 'Intro to Bigtable'
+put 'blog', '9223370734652530807', 'info:author', 'John'
+put 'blog', '9223370734652530807', 'info:category', 'Persistence'
+put 'blog', '9223370734652530807', 'content:', 'Google Bigtable is...'
+put 'blog', '9223370734652530807', 'content:', 'Google\'s Bigtable is...'
+put 'blog', '9223370734652530807', 'info:author', 'John Doe'
+put 'blog', '9223370734652530807', 'info:category', 'Persistence'
+
+scan 'blog'

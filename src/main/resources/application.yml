@@ -1,0 +1,5 @@
+# 在配置文件中指定zookeeper的host以及port端口信息
+apache:
+  zookeeper:
+    host: 192.168.170.129
+    port: 2181
