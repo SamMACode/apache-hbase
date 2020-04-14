@@ -3,3 +3,10 @@ apache:
   zookeeper:
     host: 192.168.170.129
     port: 2181
+  hbase:
+    address: "192.168.170.129:60000"
+
+# 用于调试hbase进行数据库建表create table时卡顿的问题
+logging:
+  level:
+    org.apache.hadoop.hbase: debug

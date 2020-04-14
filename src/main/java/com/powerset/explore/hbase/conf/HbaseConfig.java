@@ -27,6 +27,12 @@ public class HbaseConfig {
     private String zookeeperPort;
 
     /**
+     * 配置apache habse连接的master地址
+     */
+    @Value("${apache.hbase.address}")
+    private String hbaseAddress;
+
+    /**
      * 通过zookeeper信息配置hbase连接
      * @return
      */
@@ -34,9 +40,11 @@ public class HbaseConfig {
     public org.apache.hadoop.conf.Configuration getHbaseConfiguration() {
         org.apache.hadoop.conf.Configuration config = HBaseConfiguration.create();
         // 在hbase configuration中配置zookeeper地址、端口号信息
-        config.set("hbase.zookeeper.quorum", zookeeperHost);
-        config.set("hbase.zookeeper.property.clientPort", zookeeperPort);
-        logger.info("connect to apache hbase server, config: [{}] zkhost[{}] zkport[{}] ", config, zookeeperHost,
+        /*config.set("hbase.zookeeper.quorum", "hadoop1,hadoop2,hadoop3");
+        config.set("hbase.zookeeper.property.clientPort", "2181");
+        config.set("zookeeper.znode.parent", "/hbase1");*/
+
+        logger.info("connect to apache hbase server, config: [{}] zkhost: [{}] zkport: [{}] ", config, zookeeperHost,
                 zookeeperPort);
         return config;
     }
