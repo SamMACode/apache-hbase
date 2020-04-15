@@ -3,7 +3,7 @@ apache hbase bulk import data from csv files and include basic operate example
 
 > `apache hadoop`能够在合理的时间范围内处理`PB`级的数据，在研读`hadoop`的过程中发现了一个处理随机读写的系统，它叫做`apache hbase`。或者将其称为目前流行的一种新的数据存储架构，传统数据库解决大数据问题时成本更高，`hbase`利用了`hdfs`存储海量数据能力（不用考虑集群扩容及分库、分表内容），并提供像传统`RDBMS`查询操作。
 
-`Google Big Table`论文为`Apache Hbase`设计提供了理论依据：https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf
+`Google Big Table`论文为`Apache Hbase`的设计提供了理论依据：https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf
 
 安装依赖：`hbase`底层使用`hdfs`作为数据存储，使用`zookeeper`作为注册中心进行集群服务注册
 
@@ -17,7 +17,7 @@ apache hbase bulk import data from csv files and include basic operate example
 
 1）将仓库代码克隆到本地 `git clone https://github.com/SamMACode/hbase-stranger-example.git `；
 
-2）修改`conf`目录下的`hbase-site.xml`文件中的`hbase.zookeeper.quorum`属性、`zookeeper.znode.parent`属性为所连接`hbase`服务配置（需修改本地`host`文件）；
+2）修改`conf`目录下`hbase-site.xml`文件中的`hbase.zookeeper.quorum`属性、`zookeeper.znode.parent`属性为所连接`hbase`服务配置（需修改本地`host`文件）；
 
 ```xml
 <property>
@@ -30,7 +30,7 @@ apache hbase bulk import data from csv files and include basic operate example
 </property>
 ```
 
-`warning`: 需要特别注意，之前在本地开发时设置`zookeeper`地址为具体`ip`，导致了一直连不上`hbase`服务器。其原因是`hbase client`客户端在一直进行连接重试，等到超时后会进行报错（排查此问题花费了很长时间）。
+`warning`: 需要特别注意，之前在本地开发时配置`zookeeper`地址为具体`ip`，导致了一直连不上`hbase`服务器。其原因是`hbase`在`zookeeper`中注册的是主机的域名，对于具体`ip`地址其无法进行处理。导出 `hbase client`客户端在一直进行连接重试，之后会进行报错（排查此问题花费了很长时间）。
 
 3）进入`hbase`数据库服务器并创建`fakenames`数据表：
 
@@ -40,7 +40,7 @@ hbase(main):002:0> create 'fakenames', 'personal', 'contactinfo', 'creditcard'
 => Hbase::Table - fakenames
 ```
 
-4）进入`pom.xml`同级文件目录构建项目，并将`data`文件夹下的`fakenames-sample-1000.csv`单独放在同一目录中，随后将`csv`文件中的数据进行导入：
+4）进入`pom.xml`同级文件目录构建项目，并将`data`文件夹下的`fakenames-sample-1000.csv`与构建的`jar`包放在同一目录中，之后将`csv`文件中的数据进行导入：
 
 ```shell
 sam@sam-virtual-machine:~/repositories$ java -jar hbase-sample-0.0.1.jar fakenames-sample-1000.csv
@@ -126,7 +126,8 @@ acosta-kacy-p-343                           column=contactinfo:country, timestam
 * 通过`scan`命令查询数据表中所有数据信息：
 
   ```shell
-  hbase(main):032:0>  scan 'user'
+  hbase(main):032:0>  scan 'user
   ```
 
-  
+> Note:  项目目前仅提供对`hbase`数据库的基本操作，并通过`csv`文件将数据导入到`hbase`数据库中。对于一些复杂的查询操作目前暂不支持，后期增加过滤器、计数器、协处理器的内容，并包含`mapreduce`集成的内容。
+
