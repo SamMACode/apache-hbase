@@ -1,6 +1,7 @@
 package com.powerset.explore.hbase;
 
 import com.powerset.explore.hbase.repository.HbaseRepository;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,16 @@ public class HbaseOperateApp implements CommandLineRunner {
      */
     @Override
     public void run(String... args) throws Exception {
-        repository.insertDataToHbaseServer();
+        // 1.通过HbaseAdmin创建数据表，同时向数据表中初始化一部分数据
+        // repository.insertDataToHbaseServer();
+
+        // 2.通过指定family和column信息查询HbaseAdmin表中的数据
+        /*byte[] familyKey = Bytes.toBytes("colfam1");
+        byte[] columnKey = Bytes.toBytes("qual1");
+        String queryValue = repository.getHbaseRowValue("row1", familyKey, columnKey);
+        logger.info("query column value in specified hbase table: [{}]", queryValue);*/
+
+        //
         logger.info("complete HbaseOperateApp.run method, insert testdata to hbase server");
     }
 
