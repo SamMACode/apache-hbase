@@ -39,7 +39,7 @@ public class HbaseConfig {
     @Bean
     public org.apache.hadoop.conf.Configuration getHbaseConfiguration() {
         org.apache.hadoop.conf.Configuration config = HBaseConfiguration.create();
-        // 在hbase configuration中配置zookeeper地址、端口号信息
+        // 在hbase configuration中配置zookeeper地址、端口号信息（目前从conf/hbase-site.xml的文件读取）
         /*config.set("hbase.zookeeper.quorum", "hadoop1,hadoop2,hadoop3");
         config.set("hbase.zookeeper.property.clientPort", "2181");
         config.set("zookeeper.znode.parent", "/hbase1");*/

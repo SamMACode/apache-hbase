@@ -1,13 +1,16 @@
 package com.powerset.explore.hbase;
 
+import com.alibaba.fastjson.JSONObject;
 import com.powerset.explore.hbase.repository.HbaseRepository;
-import org.apache.hadoop.hbase.util.Bytes;
+import com.powerset.explore.hbase.service.BulkImportFakenamesData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.io.File;
 
 /**
  * @author Sam Ma
@@ -21,6 +24,9 @@ public class HbaseOperateApp implements CommandLineRunner {
 
     @Autowired
     private HbaseRepository repository;
+
+    @Autowired
+    private BulkImportFakenamesData bulkImportData;
 
     public static void main(String[] args) {
         SpringApplication.run(HbaseOperateApp.class, args);
@@ -42,7 +48,20 @@ public class HbaseOperateApp implements CommandLineRunner {
         String queryValue = repository.getHbaseRowValue("row1", familyKey, columnKey);
         logger.info("query column value in specified hbase table: [{}]", queryValue);*/
 
-        //
+        // 3.从命令行中接收 fakenames-sample-1000.csv文件的路径，并将其写入到hbase数据表中
+        logger.info("command line args: {}", JSONObject.toJSONString(args));
+        if (args.length == 0) {
+            logger.warn("required fakenames-sample-1000.csv file path in arguments {}", JSONObject.toJSONString(args));
+            System.exit(0);
+        }
+        // 对从jar命令中输入的文件路径进行校验，java -jar hbase-sample-0.0.1.jar fakenames-sample-1000.csv
+        File csvFilePath = new File(args[0]);
+        if (!csvFilePath.exists()) {
+            logger.warn("csv filepath [{}] doesn't exist", args[0]);
+            System.exit(0);
+        }
+        bulkImportData.bulkImportCsvData(args[0]);
+
         logger.info("complete HbaseOperateApp.run method, insert testdata to hbase server");
     }
 
