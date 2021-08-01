@@ -1,14 +1,11 @@
-package com.powerset.explore.hbase.service;
+package com.bigtable.explore.service;
 
-import com.powerset.explore.hbase.constant.FakenamesConstants;
-import com.powerset.explore.hbase.util.DataFormatUtil;
-import org.apache.hadoop.conf.Configuration;
+import com.bigtable.explore.util.DataFormatUtil;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -27,9 +24,6 @@ public class BulkImportFakenamesData {
 
     private static final Logger logger = LoggerFactory.getLogger(BulkImportFakenamesData.class);
 
-    @Autowired
-    private Configuration configure;
-
     /**
      * 将csv文件数据批量导入到hbase数据表中
      * @param csvFilePath
@@ -40,8 +34,8 @@ public class BulkImportFakenamesData {
          * 0 row(s) in 2.4060 seconds
          * => Hbase::Table - fakenames
          */
-        HTable fakenamesTable = new HTable(configure, "fakenames");
-        fakenamesTable.setAutoFlush(false, true);
+        HTable fakenamesTable = null; /* warning: new HTable(configure, "fakenames"); */
+// warning: fakenamesTable.setAutoFlush(false, true);
 
         int currentRow = 1;
         File dataFile = new File(csvFilePath);
@@ -98,23 +92,23 @@ public class BulkImportFakenamesData {
     private void saveExtractRecordToDb(HTable fakenamesTable, String rowKey, Map<String, byte[]> dataMap,
                                        String[] values) throws Exception {
         Put put = new Put(Bytes.toBytes(rowKey));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.PERSONNUMBER_QUALIFIER, dataMap.get("personNumber"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.GENDER_QUALIFIER, dataMap.get("gender"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.GIVENNAME_QUALIFIER, dataMap.get("givenName"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.MI_QUALIFIER, dataMap.get("mi"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.SURNAME_QUALIFIER, dataMap.get("surname"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.MAIDENNAME_QUALIFIER, dataMap.get("maidenName"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.BIRTHDATE_QUALIFIER, dataMap.get("birthdate"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.NATIONALID_QUALIFIER, dataMap.get("nationalId"));
-        put.add(FakenamesConstants.PERSONAL_FAMILY, FakenamesConstants.UPS_QUALIFIER, dataMap.get("ups"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.STREET_QUALIFIER, dataMap.get("street"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.CITY_QUALIFIER, dataMap.get("city"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.STATE_QUALIFIER, dataMap.get("state"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.POSTALCODE_QUALIFIER, dataMap.get("postalCode"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.COUNTRY_QUALIFIER, dataMap.get("country"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.EMAIL_QUALIFIER, dataMap.get("email"));
-        put.add(FakenamesConstants.CONTACTINFO_FAMILY, FakenamesConstants.TELEPHONE_QUALIFIER, dataMap.get("telephone"));
-        put.add(FakenamesConstants.CREDITCARD_FAMILY, Bytes.toBytes(DataFormatUtil.makeCreditCardQualifier(values)), dataMap.get("cardInfo"));
+        /*put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.PERSONNUMBER_QUALIFIER, dataMap.get("personNumber"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.GENDER_QUALIFIER, dataMap.get("gender"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.GIVENNAME_QUALIFIER, dataMap.get("givenName"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.MI_QUALIFIER, dataMap.get("mi"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.SURNAME_QUALIFIER, dataMap.get("surname"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.MAIDENNAME_QUALIFIER, dataMap.get("maidenName"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.BIRTHDATE_QUALIFIER, dataMap.get("birthdate"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.NATIONALID_QUALIFIER, dataMap.get("nationalId"));
+        put.add(FakenamesConst.PERSONAL_FAMILY, FakenamesConst.UPS_QUALIFIER, dataMap.get("ups"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.STREET_QUALIFIER, dataMap.get("street"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.CITY_QUALIFIER, dataMap.get("city"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.STATE_QUALIFIER, dataMap.get("state"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.POSTALCODE_QUALIFIER, dataMap.get("postalCode"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.COUNTRY_QUALIFIER, dataMap.get("country"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.EMAIL_QUALIFIER, dataMap.get("email"));
+        put.add(FakenamesConst.CONTACTINFO_FAMILY, FakenamesConst.TELEPHONE_QUALIFIER, dataMap.get("telephone"));
+        put.add(FakenamesConst.CREDITCARD_FAMILY, Bytes.toBytes(DataFormatUtil.makeCreditCardQualifier(values)), dataMap.get("cardInfo"));*/
         fakenamesTable.put(put);
     }
 

@@ -1,4 +1,4 @@
-package com.powerset.explore.hbase.constant;
+package com.bigtable.explore.constant;
 
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -7,7 +7,7 @@ import org.apache.hadoop.hbase.util.Bytes;
  * @date 2020-4-15
  * 定义apache hbase中fakenames数据表中的数据列
  */
-public class FakenamesConstants {
+public class FakenamesConst {
 
     public static final byte[] PERSONAL_FAMILY = Bytes.toBytes("personal");
     public static final byte[] CONTACTINFO_FAMILY = Bytes.toBytes("contactinfo");
@@ -30,7 +30,7 @@ public class FakenamesConstants {
     public static final byte[] NATIONALID_QUALIFIER = Bytes.toBytes("nationalId");
     public static final byte[] UPS_QUALIFIER = Bytes.toBytes("ups");
 
-    private FakenamesConstants() {
+    private FakenamesConst() {
     }
 
 }

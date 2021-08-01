@@ -1,6 +1,5 @@
-package com.powerset.explore.hbase.repository;
+package com.bigtable.explore.repository;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
@@ -25,7 +24,7 @@ public class HbaseRepository {
     private static Logger logger = LoggerFactory.getLogger(HbaseRepository.class);
 
     @Autowired
-    private Configuration hbaseConfigure;
+    private HBaseAdmin admin;
 
     /**
      * 通过hbase-client将数据写入到hbase server中
@@ -34,37 +33,37 @@ public class HbaseRepository {
         /**
          * 通过hbase admin客户端创建数据表"custom-table"
          */
-        HBaseAdmin admin = new HBaseAdmin(hbaseConfigure);
         HTableDescriptor tableDescriptor = new HTableDescriptor(TableName.valueOf("custom-table"));
         tableDescriptor.addFamily(new HColumnDescriptor("colfam1"));
         tableDescriptor.addFamily(new HColumnDescriptor("colfam2"));
         tableDescriptor.addFamily(new HColumnDescriptor("colfam3"));
         admin.createTable(tableDescriptor);
-        boolean tableAvailable = admin.isTableAvailable("custom-table");
+        boolean tableAvailable = false;  /* warning: admin.isTableAvailable("custom-table");*/
         logger.info(" whether custom-table is Available: [{}] ", tableAvailable);
 
-        HTable customTable = new HTable(hbaseConfigure, "custom-table");
+        HTable customTable = null; /* warning: new HTable(hbaseConfigure, "custom-table"); */
         Put putRow = new Put(Bytes.toBytes("row1"));
-        // 将数据添加到hbase "custom-table"中, 并将列数据写入到hbase数据表中
-        putRow.add(Bytes.toBytes("colfam1"), Bytes.toBytes("qual1"), Bytes.toBytes("value1"));
+        // 将数据添加到hbase "custom-table"中, 并将列数据写入到hbase数据表中 (warning: hbase-client 1.0写法有问题)
+        /*putRow.add(Bytes.toBytes("colfam1"), Bytes.toBytes("qual1"), Bytes.toBytes("value1"));
         putRow.add(Bytes.toBytes("colfam1"), Bytes.toBytes("qual2"), Bytes.toBytes("value2"));
-        putRow.add(Bytes.toBytes("colfam2"), Bytes.toBytes("qual1"), Bytes.toBytes("value3"));
+        putRow.add(Bytes.toBytes("colfam2"), Bytes.toBytes("qual1"), Bytes.toBytes("value3"));*/
 
         // 将构造的列式数据写入到hbase中，操作完成后关闭连接对象
         customTable.put(putRow);
-        customTable.flushCommits();
+        /*warning: customTable.flushCommits(); */
         customTable.close();
     }
 
     /**
      * 获取hbase指定行中的数据列内容
+     *
      * @param rowKey
      * @param family
      * @param column
      * @return
      */
     public String getHbaseRowValue(String rowKey, byte[] family, byte[] column) throws Exception {
-        HTable customTable = new HTable(hbaseConfigure, "custom-table");
+        HTable customTable = null; /*warning: new HTable(hbaseConfigure, "custom-table");*/
         Get getRowKey = new Get(Bytes.toBytes(rowKey));
         getRowKey.setMaxVersions(3);
         getRowKey.addFamily(family);
@@ -100,6 +99,5 @@ public class HbaseRepository {
         customTable.close();
         return Bytes.toString(hbaseResult.getRow());
     }
-
 
 }

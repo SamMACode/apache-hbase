@@ -1,6 +1,4 @@
-package com.powerset.explore.hbase.util;
-
-import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.StringUtils;
+package com.bigtable.explore.util;
 
 /**
  * @author Sam Ma
